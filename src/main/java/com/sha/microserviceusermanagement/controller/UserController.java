@@ -19,7 +19,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //Authorisation token --
+    //ResponseEntity
+    //- body, header, status
+    //Authorisation token --//to get authorised credentials
     @PostMapping("/service/registration")
     public ResponseEntity<?> saveUser(@RequestBody User user){
         if(userService.findByUsername(user.getUsername()) != null){
@@ -33,6 +35,7 @@ public class UserController {
 
     @GetMapping("/service/login")
     public ResponseEntity<?> getUser(Principal principal){
+        //HTTPServletRequest request;
         //Principal principal = request.getUserPrincipal();
         if(principal == null || principal.getName() == null){
             //This means; logout will be successful. login?logout
