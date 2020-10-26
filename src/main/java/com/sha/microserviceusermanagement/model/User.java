@@ -3,22 +3,24 @@ package com.sha.microserviceusermanagement.model;
 import lombok.Data;
 
 import javax.persistence.*;
+
 @Data
 @Entity
-@Table(name ="user")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
-    @Column(name="userName")
+    @Column(name = "userName")
     private String username;
-    @Column(name="password")
-    private  String password;
+    @Column(name = "password")
+    private String password;
 
-    @Enumerated(value =EnumType.STRING)
-    @Column(name="role")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role")
     private Role role;
+
 
 }
