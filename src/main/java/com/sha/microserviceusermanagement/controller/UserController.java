@@ -9,16 +9,14 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
 @RestController
 public class UserController {
+
     @Autowired
     private UserService userService;
 
@@ -26,19 +24,14 @@ public class UserController {
     private DiscoveryClient discoveryClient;
 
     @Autowired
-    private Environment environment;
+    private Environment env;
 
     @Value("${spring.application.name}")
-    public String serviceId;
+    private String serviceId;
 
     @GetMapping("/service/port")
     public String getPort(){
-        return "Service port number: "+ environment.getProperty("local.server.port");
-    }
-
-    @GetMapping("/service/services")
-    public ResponseEntity<?> getServices(){
-        return new ResponseEntity<>(discoveryClient.getServices(), HttpStatus.OK);
+        return "Service port number : " + env.getProperty("local.server.port");
     }
 
     @GetMapping("/service/instances")
@@ -46,23 +39,25 @@ public class UserController {
         return new ResponseEntity<>(discoveryClient.getInstances(serviceId), HttpStatus.OK);
     }
 
-    //ResponseEntity
-    //- body, header, status
-    //Authorisation token --//to get authorised credentials
+    @GetMapping("/service/services")
+    public ResponseEntity<?> getServices(){
+        return new ResponseEntity<>(discoveryClient.getServices(), HttpStatus.OK);
+    }
+
     @PostMapping("/service/registration")
     public ResponseEntity<?> saveUser(@RequestBody User user){
-        if(userService.findByUsername(user.getUsername()) != null){
-            //Status Code: 409
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        //Default role = user
-        user.setRole(Role.USER);
-        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+    if(userService.findByUsername(user.getUsername()) != null){
+        //Status Code: 409
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
+    //Default role = user
+    user.setRole(Role.USER);
+    return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+    }
+
 
     @GetMapping("/service/login")
     public ResponseEntity<?> getUser(Principal principal){
-        //HTTPServletRequest request;
         //Principal principal = request.getUserPrincipal();
         if(principal == null || principal.getName() == null){
             //This means; logout will be successful. login?logout
@@ -82,4 +77,13 @@ public class UserController {
         return ResponseEntity.ok("It is working...");
     }
 
+    @GetMapping("/service/{name}")
+    public ResponseEntity<?> Hi(@PathVariable String name){
+        return ResponseEntity.ok(userService.findByUsername(name));
+    }
+
+    @PostMapping("/service/saveUsertest")
+    public ResponseEntity<User> saveUsers(@RequestBody User user){
+        return ResponseEntity.ok(userService.save(user));
+    }
 }

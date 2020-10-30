@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
-public class UserServiceImpl implements UserService{
-    //To use passwordEncorder we need to create its Bean
+public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserRepository userRepository;
+
+    //We will create bean for it in security config.
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -25,8 +26,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User findByUsername(String username){
-       return userRepository.findByUsername(username).orElse(null);
+        return userRepository.findByUsername(username).orElse(null);
     }
+
     @Override
     public List<String> findUsers(List<Long> idList){
         return userRepository.findByIdList(idList);
